@@ -22,15 +22,13 @@ def get_data(year):
         return data
 
 
+class ParsedData:
+    def __init__(self, author_list, title_list):
+        self.author_list = author_list
+        self.title_list = title_list
+
+
 def parse_data(year):
-    class ParsedData:
-        author_list = []
-        title_list = []
-
-        def __init__(self, al, tl):
-            self.author_list = al
-            self.title_list = tl
-
     author_list = []
     title_list = []
     data = get_data(year)
