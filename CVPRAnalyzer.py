@@ -23,6 +23,14 @@ def get_data(year):
 
 
 def parse_data(year):
+    class ParsedData:
+        author_list = []
+        title_list = []
+
+        def __init__(self, al, tl):
+            self.author_list = al
+            self.title_list = tl
+
     author_list = []
     title_list = []
     data = get_data(year)
@@ -39,11 +47,25 @@ def parse_data(year):
         if i[0] == 't':
             title = i[9:-6]
             title_list.append(title)
-    return dict(zip(title_list, author_list))
+    return ParsedData(author_list, title_list)
+
+
+# 作者名-论文数量
+def author_paperquantity_analyze(author_list):
+    author_paperquantity_dict = {}
+    for i in author_list:
+        for j in i:
+            if j not in author_paperquantity_dict:
+                author_paperquantity_dict[j] = 1
+            else:
+                author_paperquantity_dict[j] += 1
+    author_paperqty_list = sorted(author_paperquantity_dict.items(), key=lambda item: item[1], reverse=True)
+    return author_paperqty_list
 
 
 if __name__ == '__main__':
     lst = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
     for y in lst:
         d = parse_data(y)
-        print(d)
+        apl = author_paperquantity_analyze(d.author_list)
+        print(apl)
