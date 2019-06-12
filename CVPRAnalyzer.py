@@ -73,9 +73,28 @@ def titlelength_paperquantity_analyze(title_list):
     return titlelength_paperquantity_list
 
 
+# 论文数量-作者数量
+def paperquantity_authorquantity_analyze(author_list):
+    author_paperquantity_dict = {}
+    for i in author_list:
+        for j in i:
+            if j not in author_paperquantity_dict:
+                author_paperquantity_dict[j] = 1
+            else:
+                author_paperquantity_dict[j] += 1
+    paperquantity_authorquantity_dict = {}
+    for i in author_paperquantity_dict:
+        if author_paperquantity_dict[i] not in paperquantity_authorquantity_dict:
+            paperquantity_authorquantity_dict[author_paperquantity_dict[i]] = 1
+        else:
+            paperquantity_authorquantity_dict[author_paperquantity_dict[i]] += 1
+    paperquantity_authorquantity_list = sorted(paperquantity_authorquantity_dict.items())
+    return paperquantity_authorquantity_list
+
+
 if __name__ == '__main__':
     lst = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
     for y in lst:
         d = parse_data(y)
-        tpl = titlelength_paperquantity_analyze(d.title_list)
-        print(tpl)
+        pal = paperquantity_authorquantity_analyze(d.author_list)
+        print(pal)
