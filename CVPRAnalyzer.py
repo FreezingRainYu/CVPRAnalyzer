@@ -48,7 +48,7 @@ def parse_data(year):
     return ParsedData(author_list, title_list)
 
 
-# 作者名-论文数量
+# 作者-论文数量
 def author_paperquantity_analyze(author_list):
     author_paperquantity_dict = {}
     for i in author_list:
@@ -57,8 +57,8 @@ def author_paperquantity_analyze(author_list):
                 author_paperquantity_dict[j] = 1
             else:
                 author_paperquantity_dict[j] += 1
-    author_paperqty_list = sorted(author_paperquantity_dict.items(), key=lambda item: item[1], reverse=True)
-    return author_paperqty_list
+    author_paperquantity_list = sorted(author_paperquantity_dict.items(), key=lambda item: item[1], reverse=True)
+    return author_paperquantity_list
 
 
 if __name__ == '__main__':
