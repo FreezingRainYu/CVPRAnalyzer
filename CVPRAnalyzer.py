@@ -61,6 +61,23 @@ def author_paperquantity_analyze(author_list):
     return author_paperquantity_list
 
 
+# 标题单词-词频
+def titleword_wordfrequncy_analyze(title_list):
+    stop_words = []
+    titleword_wordfrequncy_dict = {}
+    for i in title_list:
+        word_list = i.lower().split(' ')
+        for j in word_list:
+            j = j.strip()
+            if j and j not in stop_words:
+                if j not in titleword_wordfrequncy_dict:
+                    titleword_wordfrequncy_dict[j] = 1
+                else:
+                    titleword_wordfrequncy_dict[j] += 1
+    titleword_wordfrequncy_list = sorted(titleword_wordfrequncy_dict.items(), key=lambda item: item[1], reverse=True)
+    return titleword_wordfrequncy_list
+
+
 # 标题长度-论文数量
 def titlelength_paperquantity_analyze(title_list):
     titlelength_paperquantity_dict = {}
@@ -96,5 +113,5 @@ if __name__ == '__main__':
     lst = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
     for y in lst:
         d = parse_data(y)
-        pal = paperquantity_authorquantity_analyze(d.author_list)
-        print(pal)
+        twl = titleword_wordfrequncy_analyze(d.title_list)
+        print(twl)
