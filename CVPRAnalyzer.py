@@ -1,4 +1,5 @@
 import os
+from nltk.corpus import stopwords
 from urllib.request import urlopen
 
 
@@ -34,8 +35,8 @@ def parse_data(year):
     data = get_data(year)
     for i in data:
         if i[0] == 'a':
-            original_name_list = i[10:-6].split(' and ')
             reversed_name_list = []
+            original_name_list = i[10:-6].split(' and ')
             for original_name in original_name_list:
                 separated_name = original_name.split(', ')
                 separated_name.reverse()
@@ -63,13 +64,15 @@ def author_paperquantity_analyze(author_list):
 
 # 标题单词-词频
 def titleword_wordfrequncy_analyze(title_list):
-    stop_words = []
     titleword_wordfrequncy_dict = {}
+    stop_words = stopwords.words('english')
     for i in title_list:
         word_list = i.lower().split(' ')
         for j in word_list:
-            j = j.strip()
-            if j and j not in stop_words:
+            j = j.strip('!"%&\'()*+,-.:;=?`~­–—“”')
+            if len(j) > 1 and j[-2] == '\'':
+                j = j[:-2]
+            if j and len(j) > 1 and j not in stop_words:
                 if j not in titleword_wordfrequncy_dict:
                     titleword_wordfrequncy_dict[j] = 1
                 else:
