@@ -1,5 +1,6 @@
 import os
 from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 from urllib.request import urlopen
 
 
@@ -65,6 +66,7 @@ def author_paperquantity_analyze(author_list):
 # 标题单词-词频
 def titleword_wordfrequncy_analyze(title_list):
     titleword_wordfrequncy_dict = {}
+    lemmatizer = WordNetLemmatizer()
     stop_words = stopwords.words('english')
     for i in title_list:
         word_list = i.lower().split(' ')
@@ -72,6 +74,8 @@ def titleword_wordfrequncy_analyze(title_list):
             j = j.strip('!"%&\'()*+,-.:;=?`~­–—“”')
             if len(j) > 1 and j[-2] == '\'':
                 j = j[:-2]
+            j = lemmatizer.lemmatize(j, pos='n')
+            j = lemmatizer.lemmatize(j, pos='v')
             if j and len(j) > 1 and j not in stop_words:
                 if j not in titleword_wordfrequncy_dict:
                     titleword_wordfrequncy_dict[j] = 1
