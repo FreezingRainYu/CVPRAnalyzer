@@ -25,7 +25,8 @@ def get_data(year):
 
 
 class ParsedData:
-    def __init__(self, author_list, title_list):
+    def __init__(self, year, author_list, title_list):
+        self.year = year
         self.author_list = author_list
         self.title_list = title_list
 
@@ -47,7 +48,7 @@ def parse_data(year):
         if i[0] == 't':
             title = i[9:-6]
             title_list.append(title)
-    return ParsedData(author_list, title_list)
+    return ParsedData(year, author_list, title_list)
 
 
 # 作者-论文数量
