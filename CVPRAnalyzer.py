@@ -1,3 +1,4 @@
+import csv
 import os
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -60,8 +61,7 @@ def author_paperquantity_analyze(author_list):
                 author_paperquantity_dict[j] = 1
             else:
                 author_paperquantity_dict[j] += 1
-    author_paperquantity_list = sorted(author_paperquantity_dict.items(), key=lambda item: item[1], reverse=True)
-    return author_paperquantity_list
+    return author_paperquantity_dict
 
 
 # 标题单词-词频
@@ -82,8 +82,7 @@ def titleword_wordfrequncy_analyze(title_list):
                     titleword_wordfrequncy_dict[j] = 1
                 else:
                     titleword_wordfrequncy_dict[j] += 1
-    titleword_wordfrequncy_list = sorted(titleword_wordfrequncy_dict.items(), key=lambda item: item[1], reverse=True)
-    return titleword_wordfrequncy_list
+    return titleword_wordfrequncy_dict
 
 
 # 标题长度-论文数量
@@ -94,8 +93,7 @@ def titlelength_paperquantity_analyze(title_list):
             titlelength_paperquantity_dict[len(i)] = 1
         else:
             titlelength_paperquantity_dict[len(i)] += 1
-    titlelength_paperquantity_list = sorted(titlelength_paperquantity_dict.items(), reverse=True)
-    return titlelength_paperquantity_list
+    return titlelength_paperquantity_dict
 
 
 # 论文数量-作者数量
@@ -113,13 +111,45 @@ def paperquantity_authorquantity_analyze(author_list):
             paperquantity_authorquantity_dict[author_paperquantity_dict[i]] = 1
         else:
             paperquantity_authorquantity_dict[author_paperquantity_dict[i]] += 1
-    paperquantity_authorquantity_list = sorted(paperquantity_authorquantity_dict.items())
-    return paperquantity_authorquantity_list
+    return paperquantity_authorquantity_dict
+
+
+def csv_generate(years, original_dicts, filename):
+    index = 0
+    previous_dict = original_dicts[0]
+    current_dict = original_dicts[0]
+    for i in original_dicts:
+        if previous_dict != current_dict:
+            for j in current_dict:
+                value = previous_dict.get(j)
+                if value:
+                    current_dict[j] += value
+        previous_dict = original_dicts[index]
+        index += 1
+        if index < len(original_dicts):
+            current_dict = original_dicts[index]
+    if not os.path.isdir('result'):
+        os.makedirs('result')
+    with open('result/' + filename + '.csv', 'w', newline='', encoding='utf-8')as f:
+        header = ['name', 'value', 'date']
+        body = []
+        writer = csv.writer(f)
+        writer.writerow(header)
+        index = 0
+        for i in original_dicts:
+            for j in i:
+                row = [j, i[j], years[index]]
+                body.append(row)
+                writer.writerow(row)
+            index = index + 1
 
 
 if __name__ == '__main__':
-    lst = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
-    for y in lst:
+    yrs = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
+    apds = []
+    for y in yrs:
         d = parse_data(y)
-        twl = titleword_wordfrequncy_analyze(d.title_list)
-        print(twl)
+        apd = author_paperquantity_analyze(d.author_list)
+        apds.append(apd)
+        print(apd)
+    csv_generate(yrs, apds, 'author')
