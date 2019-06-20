@@ -115,22 +115,23 @@ def paperquantity_authorquantity_analyze(author_list):
 
 
 def csv_generate(years, original_dicts, filename):
-    index = 0
     previous_dict = original_dicts[0]
-    current_dict = original_dicts[0]
     for i in original_dicts:
+        current_dict = i
         if previous_dict != current_dict:
             for j in current_dict:
                 value = previous_dict.get(j)
                 if value:
                     current_dict[j] += value
-        previous_dict = original_dicts[index]
-        index += 1
-        if index < len(original_dicts):
-            current_dict = original_dicts[index]
-    if not os.path.isdir('result'):
-        os.makedirs('result')
-    with open('result/' + filename + '.csv', 'w', newline='', encoding='utf-8')as f:
+            for j in previous_dict:
+                value = previous_dict.get(j)
+                find = current_dict.get(j)
+                if not find:
+                    current_dict[j] = value
+        previous_dict = current_dict
+    if not os.path.isdir('csv'):
+        os.makedirs('csv')
+    with open('csv/' + filename + '.csv', 'w', newline='', encoding='utf-8')as f:
         header = ['name', 'value', 'date']
         body = []
         writer = csv.writer(f)
