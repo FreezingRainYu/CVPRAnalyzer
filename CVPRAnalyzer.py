@@ -146,11 +146,4 @@ def csv_generate(years, original_dicts, filename):
 
 
 if __name__ == '__main__':
-    yrs = [2013, 2014, 2015, 2016, 2017, 2018, 2019]
-    apds = []
-    for y in yrs:
-        d = parse_data(y)
-        apd = author_paperquantity_analyze(d.author_list)
-        apds.append(apd)
-        print(apd)
-    csv_generate(yrs, apds, 'author')
+    print('CVPRAnalyzer')
