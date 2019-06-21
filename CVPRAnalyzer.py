@@ -133,14 +133,13 @@ def csv_generate(years, original_dicts, filename):
         os.makedirs('csv')
     with open('csv/' + filename + '.csv', 'w', newline='', encoding='utf-8')as f:
         header = ['name', 'value', 'date']
-        body = []
         writer = csv.writer(f)
         writer.writerow(header)
         index = 0
         for i in original_dicts:
             for j in i:
                 row = [j, i[j], years[index]]
-                body.append(row)
+                print(row)
                 writer.writerow(row)
             index = index + 1
 
