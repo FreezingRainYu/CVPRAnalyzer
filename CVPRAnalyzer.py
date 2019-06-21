@@ -53,9 +53,9 @@ def parse_data(year):
 
 
 # 作者-论文数量
-def author_paperquantity_analyze(author_list):
+def author_paperquantity_analyze(data):
     author_paperquantity_dict = {}
-    for i in author_list:
+    for i in data.author_list:
         for j in i:
             if j not in author_paperquantity_dict:
                 author_paperquantity_dict[j] = 1
@@ -65,11 +65,11 @@ def author_paperquantity_analyze(author_list):
 
 
 # 标题单词-词频
-def titleword_wordfrequncy_analyze(title_list):
+def titleword_wordfrequncy_analyze(data):
     titleword_wordfrequncy_dict = {}
     lemmatizer = WordNetLemmatizer()
     stop_words = stopwords.words('english')
-    for i in title_list:
+    for i in data.title_list:
         word_list = i.lower().split(' ')
         for j in word_list:
             j = j.strip('!"%&\'()*+,-.:;=?`~­–—“”')
@@ -86,9 +86,9 @@ def titleword_wordfrequncy_analyze(title_list):
 
 
 # 标题长度-论文数量
-def titlelength_paperquantity_analyze(title_list):
+def titlelength_paperquantity_analyze(data):
     titlelength_paperquantity_dict = {}
-    for i in title_list:
+    for i in data.title_list:
         if len(i) not in titlelength_paperquantity_dict:
             titlelength_paperquantity_dict[len(i)] = 1
         else:
@@ -97,9 +97,9 @@ def titlelength_paperquantity_analyze(title_list):
 
 
 # 论文数量-作者数量
-def paperquantity_authorquantity_analyze(author_list):
+def paperquantity_authorquantity_analyze(data):
     author_paperquantity_dict = {}
-    for i in author_list:
+    for i in data.author_list:
         for j in i:
             if j not in author_paperquantity_dict:
                 author_paperquantity_dict[j] = 1
