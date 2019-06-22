@@ -53,20 +53,20 @@ def parse_data(year):
 
 
 # 作者-论文数量
-def author_paperquantity_analyze(data):
-    author_paperquantity_dict = {}
+def author_papernum_analyze(data):
+    author_papernum_dict = {}
     for i in data.author_list:
         for j in i:
-            if j not in author_paperquantity_dict:
-                author_paperquantity_dict[j] = 1
+            if j not in author_papernum_dict:
+                author_papernum_dict[j] = 1
             else:
-                author_paperquantity_dict[j] += 1
-    return author_paperquantity_dict
+                author_papernum_dict[j] += 1
+    return author_papernum_dict
 
 
 # 标题单词-词频
-def titleword_wordfrequncy_analyze(data):
-    titleword_wordfrequncy_dict = {}
+def titleword_wordfrequency_analyze(data):
+    titleword_wordfrequency_dict = {}
     lemmatizer = WordNetLemmatizer()
     stop_words = stopwords.words('english')
     for i in data.title_list:
@@ -78,40 +78,63 @@ def titleword_wordfrequncy_analyze(data):
             j = lemmatizer.lemmatize(j, pos='n')
             j = lemmatizer.lemmatize(j, pos='v')
             if len(j) > 1 and j not in stop_words:
-                if j not in titleword_wordfrequncy_dict:
-                    titleword_wordfrequncy_dict[j] = 1
+                if j not in titleword_wordfrequency_dict:
+                    titleword_wordfrequency_dict[j] = 1
                 else:
-                    titleword_wordfrequncy_dict[j] += 1
-    return titleword_wordfrequncy_dict
+                    titleword_wordfrequency_dict[j] += 1
+    return titleword_wordfrequency_dict
 
 
-# 标题长度-论文数量
-def titlelength_paperquantity_analyze(data):
-    titlelength_paperquantity_dict = {}
+# 标题字符长度-论文数量
+def titlecharlength_papernum_analyze(data):
+    titlecharlength_papernum_dict = {}
     for i in data.title_list:
-        if len(i) not in titlelength_paperquantity_dict:
-            titlelength_paperquantity_dict[len(i)] = 1
+        if len(i) not in titlecharlength_papernum_dict:
+            titlecharlength_papernum_dict[len(i)] = 1
         else:
-            titlelength_paperquantity_dict[len(i)] += 1
-    return titlelength_paperquantity_dict
+            titlecharlength_papernum_dict[len(i)] += 1
+    return titlecharlength_papernum_dict
+
+
+# 标题单词长度-论文数量
+def titlewordlength_papernum_analyze(data):
+    titlewordlength_papernum_dict = {}
+    for i in data.title_list:
+        title_word_list = i.split(' ')
+        if len(title_word_list) not in titlewordlength_papernum_dict:
+            titlewordlength_papernum_dict[len(title_word_list)] = 1
+        else:
+            titlewordlength_papernum_dict[len(title_word_list)] += 1
+    return titlewordlength_papernum_dict
 
 
 # 论文数量-作者数量
-def paperquantity_authorquantity_analyze(data):
-    author_paperquantity_dict = {}
+def papernum_authornum_analyze(data):
+    author_papernum_dict = {}
     for i in data.author_list:
         for j in i:
-            if j not in author_paperquantity_dict:
-                author_paperquantity_dict[j] = 1
+            if j not in author_papernum_dict:
+                author_papernum_dict[j] = 1
             else:
-                author_paperquantity_dict[j] += 1
-    paperquantity_authorquantity_dict = {}
-    for i in author_paperquantity_dict:
-        if author_paperquantity_dict[i] not in paperquantity_authorquantity_dict:
-            paperquantity_authorquantity_dict[author_paperquantity_dict[i]] = 1
+                author_papernum_dict[j] += 1
+    papernum_authornum_dict = {}
+    for i in author_papernum_dict:
+        if author_papernum_dict[i] not in papernum_authornum_dict:
+            papernum_authornum_dict[author_papernum_dict[i]] = 1
         else:
-            paperquantity_authorquantity_dict[author_paperquantity_dict[i]] += 1
-    return paperquantity_authorquantity_dict
+            papernum_authornum_dict[author_papernum_dict[i]] += 1
+    return papernum_authornum_dict
+
+
+# 作者数量-论文数量
+def authornum_papernum_analyze(data):
+    authornum_papernum_dict = {}
+    for i in data.author_list:
+        if len(i) not in authornum_papernum_dict:
+            authornum_papernum_dict[len(i)] = 1
+        else:
+            authornum_papernum_dict[len(i)] += 1
+    return authornum_papernum_dict
 
 
 def csv_generate(years, original_dicts, filename):
