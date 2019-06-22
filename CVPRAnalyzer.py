@@ -1,5 +1,6 @@
 import csv
 import os
+from copy import deepcopy
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from urllib.request import urlopen
@@ -14,10 +15,10 @@ def get_data(year):
         url = 'http://openaccess.thecvf.com/CVPR' + year + '.py'
         source = urlopen(url).read().decode('utf-8').splitlines()
         initials = ['a', 't']
-        data = [i for i in source if i and i[0] in initials]
+        data = [line for line in source if line and line[0] in initials]
         with open('data/CVPR' + year, 'w', encoding='utf-8') as f:
-            for i in data:
-                f.write(i)
+            for line in data:
+                f.write(line)
                 f.write('\n')
         return data
     else:
@@ -38,18 +39,18 @@ def parse_data(year):
     author_list = []
     title_list = []
     data = get_data(year)
-    for i in data:
-        if i[0] == 'a':
+    for line in data:
+        if line[0] == 'a':
             reversed_name_list = []
-            original_name_list = i[10:-6].split(' and ')
+            original_name_list = line[10:-6].split(' and ')
             for original_name in original_name_list:
                 separated_name = original_name.split(', ')
                 separated_name.reverse()
                 reversed_name = ' '.join(separated_name)
                 reversed_name_list.append(reversed_name)
             author_list.append(reversed_name_list)
-        if i[0] == 't':
-            title = i[9:-6]
+        if line[0] == 't':
+            title = line[9:-6]
             title_list.append(title)
     return ParsedData(year, author_list, title_list)
 
@@ -57,12 +58,12 @@ def parse_data(year):
 # {作者: 该作者的论文数量}
 def author_papernum_analyze(data):
     author_papernum_dict = {}
-    for i in data.author_list:
-        for j in i:
-            if j not in author_papernum_dict:
-                author_papernum_dict[j] = 1
+    for authors in data.author_list:
+        for author in authors:
+            if author not in author_papernum_dict:
+                author_papernum_dict[author] = 1
             else:
-                author_papernum_dict[j] += 1
+                author_papernum_dict[author] += 1
     return author_papernum_dict
 
 
@@ -71,42 +72,42 @@ def titleword_wordfrequency_analyze(data):
     titleword_wordfrequency_dict = {}
     lemmatizer = WordNetLemmatizer()
     stop_words = stopwords.words('english')
-    for i in data.title_list:
-        word_list = i.lower().split(' ')
-        for j in word_list:
-            j = j.strip('!"%&\'()*+,-.:;=?`~­–—“”')
-            if len(j) > 1 and j[-2] == '\'':
-                j = j[:-2]
-            j = lemmatizer.lemmatize(j, pos='n')
-            j = lemmatizer.lemmatize(j, pos='v')
-            if len(j) > 1 and j not in stop_words:
-                if j not in titleword_wordfrequency_dict:
-                    titleword_wordfrequency_dict[j] = 1
+    for title in data.title_list:
+        words = title.lower().split()
+        for word in words:
+            word = word.strip('!"%&\'()*+,-.:;=?`~­–—“”')
+            if len(word) > 1 and word[-2] == '\'':
+                word = word[:-2]
+            word = lemmatizer.lemmatize(word, pos='n')
+            word = lemmatizer.lemmatize(word, pos='v')
+            if len(word) > 1 and word not in stop_words:
+                if word not in titleword_wordfrequency_dict:
+                    titleword_wordfrequency_dict[word] = 1
                 else:
-                    titleword_wordfrequency_dict[j] += 1
+                    titleword_wordfrequency_dict[word] += 1
     return titleword_wordfrequency_dict
 
 
 # {标题字符长度: 符合该长度的论文数量}
 def titlecharlength_papernum_analyze(data):
     titlecharlength_papernum_dict = {}
-    for i in data.title_list:
-        if len(i) not in titlecharlength_papernum_dict:
-            titlecharlength_papernum_dict[len(i)] = 1
+    for title in data.title_list:
+        if len(title) not in titlecharlength_papernum_dict:
+            titlecharlength_papernum_dict[len(title)] = 1
         else:
-            titlecharlength_papernum_dict[len(i)] += 1
+            titlecharlength_papernum_dict[len(title)] += 1
     return titlecharlength_papernum_dict
 
 
 # {标题单词长度: 符合该长度的论文数量}
 def titlewordlength_papernum_analyze(data):
     titlewordlength_papernum_dict = {}
-    for i in data.title_list:
-        title_word_list = i.split()
-        if len(title_word_list) not in titlewordlength_papernum_dict:
-            titlewordlength_papernum_dict[len(title_word_list)] = 1
+    for title in data.title_list:
+        words = title.split()
+        if len(words) not in titlewordlength_papernum_dict:
+            titlewordlength_papernum_dict[len(words)] = 1
         else:
-            titlewordlength_papernum_dict[len(title_word_list)] += 1
+            titlewordlength_papernum_dict[len(words)] += 1
     return titlewordlength_papernum_dict
 
 
@@ -114,55 +115,72 @@ def titlewordlength_papernum_analyze(data):
 def papernum_authornum_analyze(data):
     author_papernum_dict = author_papernum_analyze(data)
     papernum_authornum_dict = {}
-    for i in author_papernum_dict:
-        if author_papernum_dict[i] not in papernum_authornum_dict:
-            papernum_authornum_dict[author_papernum_dict[i]] = 1
+    for author in author_papernum_dict:
+        if author_papernum_dict[author] not in papernum_authornum_dict:
+            papernum_authornum_dict[author_papernum_dict[author]] = 1
         else:
-            papernum_authornum_dict[author_papernum_dict[i]] += 1
+            papernum_authornum_dict[author_papernum_dict[author]] += 1
     return papernum_authornum_dict
 
 
 # {作者数量：满足该作者数量的论文数量}
 def authornum_papernum_analyze(data):
     authornum_papernum_dict = {}
-    for i in data.author_list:
-        if len(i) not in authornum_papernum_dict:
-            authornum_papernum_dict[len(i)] = 1
+    for authors in data.author_list:
+        if len(authors) not in authornum_papernum_dict:
+            authornum_papernum_dict[len(authors)] = 1
         else:
-            authornum_papernum_dict[len(i)] += 1
+            authornum_papernum_dict[len(authors)] += 1
     return authornum_papernum_dict
 
 
-# 历年数据累加生成csv文件
-def csv_generate(years, original_dicts, filename):
-    if len(years) != len(original_dicts):
-        print(filename + '.csv generation failed.')
-        return
-    previous_dict = original_dicts[0]
-    for i in original_dicts:
-        current_dict = i
+# 累加历年数据字典，生成数据字典列表
+def accumulate_dicts(years, original_dicts_list):
+    if len(years) != len(original_dicts_list):
+        raise IndexError
+    accumulated_dicts_list = deepcopy(original_dicts_list)
+    previous_dict = accumulated_dicts_list[0]
+    for original_dict in accumulated_dicts_list:
+        current_dict = original_dict
         if previous_dict != current_dict:
-            for j in current_dict:
-                value = previous_dict.get(j)
+            for i in current_dict:
+                value = previous_dict.get(i)
                 if value:
-                    current_dict[j] += value
-            for j in previous_dict:
-                value = previous_dict.get(j)
-                find = current_dict.get(j)
+                    current_dict[i] += value
+            for i in previous_dict:
+                value = previous_dict.get(i)
+                find = current_dict.get(i)
                 if not find:
-                    current_dict[j] = value
+                    current_dict[i] = value
         previous_dict = current_dict
+    return accumulated_dicts_list
+
+
+# 根据某年数据字典生成csv文件
+def generate_csv_by_dict(year, source_dict, filename):
     if not os.path.isdir('csv'):
         os.makedirs('csv')
     with open('csv/' + filename + '.csv', 'w', newline='', encoding='utf-8')as f:
         header = ['name', 'value', 'date']
         writer = csv.writer(f)
         writer.writerow(header)
-        for i in range(len(years)):
-            for j in original_dicts[i]:
-                row = [j, original_dicts[i][j], years[i]]
+        for item in source_dict:
+            row = [item, source_dict[item], year]
+            writer.writerow(row)
+
+
+# 根据历年数据字典列表生成csv文件
+def generate_csv_by_list(years, source_dicts_list, filename):
+    if not os.path.isdir('csv'):
+        os.makedirs('csv')
+    with open('csv/' + filename + '.csv', 'w', newline='', encoding='utf-8')as f:
+        header = ['name', 'value', 'date']
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for index in range(len(years)):
+            for item in source_dicts_list[index]:
+                row = [item, source_dicts_list[index][item], years[index]]
                 writer.writerow(row)
-    print(filename + '.csv generation succeeded.')
 
 
 if __name__ == '__main__':
