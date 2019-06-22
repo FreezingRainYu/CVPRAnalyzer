@@ -5,6 +5,7 @@ from nltk.stem import WordNetLemmatizer
 from urllib.request import urlopen
 
 
+# 获取数据
 def get_data(year):
     year = str(year)
     if not os.path.isdir('data'):
@@ -32,6 +33,7 @@ class ParsedData:
         self.title_list = title_list
 
 
+# 解析数据
 def parse_data(year):
     author_list = []
     title_list = []
@@ -52,7 +54,7 @@ def parse_data(year):
     return ParsedData(year, author_list, title_list)
 
 
-# 作者-论文数量
+# {作者: 该作者的论文数量}
 def author_papernum_analyze(data):
     author_papernum_dict = {}
     for i in data.author_list:
@@ -64,7 +66,7 @@ def author_papernum_analyze(data):
     return author_papernum_dict
 
 
-# 标题单词-词频
+# {标题单词: 该单词的词频}
 def titleword_wordfrequency_analyze(data):
     titleword_wordfrequency_dict = {}
     lemmatizer = WordNetLemmatizer()
@@ -85,7 +87,7 @@ def titleword_wordfrequency_analyze(data):
     return titleword_wordfrequency_dict
 
 
-# 标题字符长度-论文数量
+# {标题字符长度: 符合该长度的论文数量}
 def titlecharlength_papernum_analyze(data):
     titlecharlength_papernum_dict = {}
     for i in data.title_list:
@@ -96,11 +98,11 @@ def titlecharlength_papernum_analyze(data):
     return titlecharlength_papernum_dict
 
 
-# 标题单词长度-论文数量
+# {标题单词长度: 符合该长度的论文数量}
 def titlewordlength_papernum_analyze(data):
     titlewordlength_papernum_dict = {}
     for i in data.title_list:
-        title_word_list = i.split(' ')
+        title_word_list = i.split()
         if len(title_word_list) not in titlewordlength_papernum_dict:
             titlewordlength_papernum_dict[len(title_word_list)] = 1
         else:
@@ -108,15 +110,9 @@ def titlewordlength_papernum_analyze(data):
     return titlewordlength_papernum_dict
 
 
-# 论文数量-作者数量
+# {论文数量: 满足该论文数量的作者数量}
 def papernum_authornum_analyze(data):
-    author_papernum_dict = {}
-    for i in data.author_list:
-        for j in i:
-            if j not in author_papernum_dict:
-                author_papernum_dict[j] = 1
-            else:
-                author_papernum_dict[j] += 1
+    author_papernum_dict = author_papernum_analyze(data)
     papernum_authornum_dict = {}
     for i in author_papernum_dict:
         if author_papernum_dict[i] not in papernum_authornum_dict:
@@ -126,7 +122,7 @@ def papernum_authornum_analyze(data):
     return papernum_authornum_dict
 
 
-# 作者数量-论文数量
+# {作者数量：满足该作者数量的论文数量}
 def authornum_papernum_analyze(data):
     authornum_papernum_dict = {}
     for i in data.author_list:
@@ -137,6 +133,7 @@ def authornum_papernum_analyze(data):
     return authornum_papernum_dict
 
 
+# 历年数据累加生成csv文件
 def csv_generate(years, original_dicts, filename):
     if len(years) != len(original_dicts):
         print(filename + '.csv generation failed.')
