@@ -77,7 +77,7 @@ def titleword_wordfrequncy_analyze(data):
                 j = j[:-2]
             j = lemmatizer.lemmatize(j, pos='n')
             j = lemmatizer.lemmatize(j, pos='v')
-            if j and len(j) > 1 and j not in stop_words:
+            if len(j) > 1 and j not in stop_words:
                 if j not in titleword_wordfrequncy_dict:
                     titleword_wordfrequncy_dict[j] = 1
                 else:
@@ -115,6 +115,9 @@ def paperquantity_authorquantity_analyze(data):
 
 
 def csv_generate(years, original_dicts, filename):
+    if len(years) != len(original_dicts):
+        print(filename + '.csv generation failed.')
+        return
     previous_dict = original_dicts[0]
     for i in original_dicts:
         current_dict = i
@@ -135,13 +138,11 @@ def csv_generate(years, original_dicts, filename):
         header = ['name', 'value', 'date']
         writer = csv.writer(f)
         writer.writerow(header)
-        index = 0
-        for i in original_dicts:
-            for j in i:
-                row = [j, i[j], years[index]]
-                print(row)
+        for i in range(len(years)):
+            for j in original_dicts[i]:
+                row = [j, original_dicts[i][j], years[i]]
                 writer.writerow(row)
-            index = index + 1
+    print(filename + '.csv generation succeeded.')
 
 
 if __name__ == '__main__':
