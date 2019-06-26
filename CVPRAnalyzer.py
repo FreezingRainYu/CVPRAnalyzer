@@ -143,15 +143,15 @@ def accumulate_dicts(years, original_dicts_list):
     for original_dict in accumulated_dicts_list:
         current_dict = original_dict
         if previous_dict != current_dict:
-            for i in current_dict:
-                value = previous_dict.get(i)
+            for key in current_dict:
+                value = previous_dict.get(key)
                 if value:
-                    current_dict[i] += value
-            for i in previous_dict:
-                value = previous_dict.get(i)
-                find = current_dict.get(i)
+                    current_dict[key] += value
+            for key in previous_dict:
+                value = previous_dict.get(key)
+                find = current_dict.get(key)
                 if not find:
-                    current_dict[i] = value
+                    current_dict[key] = value
         previous_dict = current_dict
     return accumulated_dicts_list
 
@@ -164,8 +164,8 @@ def generate_csv_by_dict(year, source_dict, filename):
         header = ['name', 'value', 'date']
         writer = csv.writer(f)
         writer.writerow(header)
-        for item in source_dict:
-            row = [item, source_dict[item], year]
+        for key in source_dict:
+            row = [key, source_dict[key], year]
             writer.writerow(row)
 
 
@@ -177,9 +177,9 @@ def generate_csv_by_list(years, source_dicts_list, filename):
         header = ['name', 'value', 'date']
         writer = csv.writer(f)
         writer.writerow(header)
-        for index in range(len(years)):
-            for item in source_dicts_list[index]:
-                row = [item, source_dicts_list[index][item], years[index]]
+        for index, year in enumerate(years):
+            for key in source_dicts_list[index]:
+                row = [key, source_dicts_list[index][key], year]
                 writer.writerow(row)
 
 
