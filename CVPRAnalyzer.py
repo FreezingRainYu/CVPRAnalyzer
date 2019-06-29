@@ -1,3 +1,4 @@
+# CVPRAnalyzer.py
 import csv
 import os
 from copy import deepcopy
@@ -55,7 +56,7 @@ def parse_data(year):
     return ParsedData(year, author_list, title_list)
 
 
-# {作者: 该作者的论文数量}
+# 高产作者分析
 def author_papernum_analyze(data):
     author_papernum_dict = {}
     for authors in data.author_list:
@@ -67,7 +68,7 @@ def author_papernum_analyze(data):
     return author_papernum_dict
 
 
-# {标题单词: 该单词的词频}
+# 研究热点领域/词汇分析
 def titleword_wordfrequency_analyze(data):
     titleword_wordfrequency_dict = {}
     lemmatizer = WordNetLemmatizer()
@@ -88,7 +89,7 @@ def titleword_wordfrequency_analyze(data):
     return titleword_wordfrequency_dict
 
 
-# {标题字符长度: 符合该长度的论文数量}
+# 标题字符长度分析
 def titlecharlength_papernum_analyze(data):
     titlecharlength_papernum_dict = {}
     for title in data.title_list:
@@ -99,7 +100,7 @@ def titlecharlength_papernum_analyze(data):
     return titlecharlength_papernum_dict
 
 
-# {标题单词长度: 符合该长度的论文数量}
+# 标题单词长度分析
 def titlewordlength_papernum_analyze(data):
     titlewordlength_papernum_dict = {}
     for title in data.title_list:
@@ -111,7 +112,7 @@ def titlewordlength_papernum_analyze(data):
     return titlewordlength_papernum_dict
 
 
-# {论文数量: 满足该论文数量的作者数量}
+# 每名作者论文数量分析
 def papernum_authornum_analyze(data):
     author_papernum_dict = author_papernum_analyze(data)
     papernum_authornum_dict = {}
@@ -123,7 +124,7 @@ def papernum_authornum_analyze(data):
     return papernum_authornum_dict
 
 
-# {作者数量：满足该作者数量的论文数量}
+# 每篇论文作者数量分析
 def authornum_papernum_analyze(data):
     authornum_papernum_dict = {}
     for authors in data.author_list:
